@@ -19,11 +19,21 @@ import DriverAvatar from '../../assets/svg/DriverAvatar.svg';
 import Expensess from '../../assets/svg/Expensess.svg';
 import {COLORS} from '../../themes/colors';
 import {FONTS} from '../../themes/textfonts';
-import {Button, View, Text, StyleSheet,TouchableOpacity, SafeAreaView} from 'react-native';
+import {
+  Button,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
 import Dashboard from '../../dashboard/dashboard';
 import MainHeader from '../../component/MainHeader';
+import {useDispatch} from 'react-redux';
 import {normalize, wH, wW} from '../../styles/globalStyle';
 import {useNavigation} from '@react-navigation/native';
+import {driverLogOut} from '../../StateManagement/loginData/actions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import FirstPage from './pages/FirstPage';
 // import SecondPage from './pages/SecondPage';
 // import ThirdPage from './pages/ThirdPage';
@@ -41,121 +51,144 @@ const FirstScreenStack = () => {
   );
 };
 
-const DrawerPage = (navigation) => {
+const DrawerPage = navigation => {
   const DrawerHeaderContent = props => {
+    const dispatch = useDispatch();
+    const sendMail = () => {
+      dispatch(driverLogOut());
+    };
     return (
       <DrawerContentScrollView
-        contentContainerStyle={{ height:wH,backgroundColor: '#F9FAFC'}}>
-        <View
-          style={{
-            height: wH/6,
-            marginTop: wH/35,
-            marginLeft: wW/40,
-          }}>
-          <Logo width={42} height={42} />
-          <View style={[styles.customerDetails]}>
-            <DriverAvatar width={46} height={46} />
-            <View style={{marginLeft:wW/45,}}>
-              <Text style={styles.customer}>Driver 1</Text>
-              <View style={styles.details}>
-              <Text style={styles.customerMail}>driver01</Text></View>
-            </View>
-          </View>
-
-          {/* <View
+        contentContainerStyle={{height: wH, backgroundColor: '#F9FAFC'}}>
+        
+          <View
+            style={{
+              height: wH / 6,
+              marginTop: wH / 35,
+              marginLeft: wW / 40,
+            }}>
+              
+            <Logo width={42} height={42} />
+            <TouchableOpacity onPress={() => {
+          props.navigation.toggleDrawer(),
+          props.navigation.navigate('DriverProfile');
+        }}>
+            <View style={[styles.customerDetails]}>
+              <DriverAvatar width={46} height={46} />
+              <View style={{marginLeft: wW / 45}}>
+                <Text style={styles.customer}>Driver 1</Text>
+                <View style={styles.details}>
+                  <Text style={styles.customerMail}>driver01</Text>
+                </View>
+              </View>
+            </View></TouchableOpacity>
+            {/* <View
             style={{
               height: 0.5,
               backgroundColor: COLORS.borderGrey,
               marginHorizontal: 10,
             }}></View> */}
-        </View>
+          </View>
+       
         <DrawerItemList {...props} />
-        <View style={{width:'100%',alignItems:'center'}}><View style={{width:'90%', height:0.5,backgroundColor:'#8E8E8E'}}></View></View>
+        <View style={{width: '100%', alignItems: 'center'}}>
+          <View
+            style={{
+              width: '90%',
+              height: 0.5,
+              backgroundColor: '#8E8E8E',
+            }}></View>
+        </View>
         <DrawerItem
           icon={() => <Expensess width={46} height={46} />}
-          style={{height: wH/10,
-            width: '100%',justifyContent:'center',
+          style={{
+            height: wH / 10,
+            width: '100%',
+            justifyContent: 'center',
             fontFamily: 'DMSans-Bold',
-            
-            
-          //    backgroundColor: COLORS.white,
+
+            //    backgroundColor: COLORS.white,
           }}
-          label={() => (
-            <Text
-              style={styles.DrawerOption}>
-              Expenses
-              
-            </Text>
-          )}
+          label={() => <Text style={styles.DrawerOption}>Expenses</Text>}
           onPress={() => {
             props.navigation.toggleDrawer(),
-            props.navigation.navigate('Expenses');
+              props.navigation.navigate('Expenses');
             //navigation.navigate('Expenses');ImagePicker
           }}
         />
-        <View style={{width:'100%',alignItems:'center'}}><View style={{width:'85%', height:0.5,backgroundColor:'#8E8E8E'}}></View></View>
+        <View style={{width: '100%', alignItems: 'center'}}>
+          <View
+            style={{
+              width: '85%',
+              height: 0.5,
+              backgroundColor: '#8E8E8E',
+            }}></View>
+        </View>
         <DrawerItem
           icon={() => <History width={46} height={46} />}
-          style={{height: wH/10,
-            width: '90%',justifyContent:'center',
+          style={{
+            height: wH / 10,
+            width: '90%',
+            justifyContent: 'center',
             fontFamily: FONTS.DMSansMedium,
-            
-            
-          //    backgroundColor: COLORS.white,
+
+            //    backgroundColor: COLORS.white,
           }}
-          label={() => (
-            <Text
-              style={styles.DrawerOption}>
-              History
-            </Text>
-          )}
+          label={() => <Text style={styles.DrawerOption}>History</Text>}
           onPress={() => {
-           // props.navigation.toggleDrawer(),
-           
-              navigation.navigate('Expenses');
+            // props.navigation.toggleDrawer(),
+
+            navigation.navigate('Expenses');
           }}
         />
-        <View style={{width:'100%',alignItems:'center'}}><View style={{width:'85%', height:0.5,backgroundColor:'#8E8E8E'}}></View></View>
+        <View style={{width: '100%', alignItems: 'center'}}>
+          <View
+            style={{
+              width: '85%',
+              height: 0.5,
+              backgroundColor: '#8E8E8E',
+            }}></View>
+        </View>
         <DrawerItem
           icon={() => <Details width={46} height={46} />}
-          style={{height: wH/10,justifyContent:'center',
+          style={{
+            height: wH / 10,
+            justifyContent: 'center',
             width: '90%',
             fontFamily: FONTS.DMSansMedium,
-            
-            
-          //    backgroundColor: COLORS.white,
+
+            //    backgroundColor: COLORS.white,
           }}
-          label={() => (
-            <Text
-              style={styles.DrawerOption}>
-              Details
-              
-            </Text>
-          )}
+          label={() => <Text style={styles.DrawerOption}>Details</Text>}
           onPress={() => {
             props.navigation.toggleDrawer(),
               props.navigation.navigate('CreditScreen');
           }}
         />
-        
+
         <View
           style={{
-            height: wH/6,
-            marginTop: wH/35,
-            marginLeft: wW/40,position:'absolute',bottom:0,marginLeft:wW/20
+            height: wH / 6,
+            marginTop: wH / 35,
+            marginLeft: wW / 40,
+            position: 'absolute',
+            bottom: 0,
+            marginLeft: wW / 20,
           }}>
           <TouchableOpacity
             onPress={() => {
+              sendMail();
               props.navigation.navigate('Login');
-            }}
-            >
-          <View style={[styles.customerDetails]}>
-            <Logout width={46} height={46} />
-            <View style={{marginLeft:wW/80,}}>
-              <Text style={[styles.customer,{fontSize:normalize(16)}]}>Logout</Text>
-              
+            }}>
+            <View style={[styles.customerDetails]}>
+              <Logout width={46} height={46} />
+              <View style={{marginLeft: wW / 80}}>
+                <Text style={[styles.customer, {fontSize: normalize(16)}]}>
+                  Logout
+                </Text>
+              </View>
             </View>
-          </View></TouchableOpacity>
+          </TouchableOpacity>
 
           {/* <View
             style={{
@@ -193,47 +226,39 @@ const DrawerPage = (navigation) => {
 const styles = StyleSheet.create({
   customer: {
     color: COLORS.textColor,
-    
+
     fontSize: normalize(20),
     fontFamily: 'DMSans-Bold',
-    
   },
   customerDetails: {
-    
-    flexDirection: 'row', alignItems: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
     fontSize: 18,
-    
-    marginTop: wH/45,
 
-
-
-    
+    marginTop: wH / 45,
   },
   DrawerOption: {
-    
-//  paddingLeft:0,
- marginLeft:-25,
-    color: COLORS.textColor, fontFamily: 'DMSans-Bold',
-   
+    //  paddingLeft:0,
+    marginLeft: -25,
+    color: COLORS.textColor,
+    fontFamily: 'DMSans-Bold',
   },
   details: {
-    width:wW/6.5,
-    height:wW/20,
+    width: wW / 6.5,
+    height: wW / 20,
     borderRadius: wW / 25,
-    backgroundColor: '#eeeff1',marginTop:wW/120,
-    justifyContent:'center',alignItems:'center',
+    backgroundColor: '#eeeff1',
+    marginTop: wW / 120,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   customerMail: {
-    
-    
     color: '#8E8E8E',
     // alignItems: 'center',
     // justifyContent: 'center',
     fontFamily: 'DMSans-Regular',
-    fontWeight:'500',
+    fontWeight: '500',
     fontSize: normalize(12),
-    
   },
- 
 });
 export default DrawerPage;

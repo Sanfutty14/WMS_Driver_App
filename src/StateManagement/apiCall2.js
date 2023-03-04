@@ -3,25 +3,13 @@ import { API_URL } from '../../config';
 import { useSelector } from 'react-redux';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 export default (token) => {
-
- 
- //const userData = useSelector(state=> state.loginReducer);
- 
-//  console.log(JWT)
-
-
-
-   console.log('TOKEN VALUE :::::::++++', token);
-  
-  
+  console.log('TOKEN VALUE :::::::++++', token);
   return axios.create({
     baseURL: `${API_URL}`,
     headers: {
       'WMS_App': 'encryptedKey',
       'Content-Type': 'multipart/form-data',
-      'Authorization': `Bearer ${
-        token
-      }`,
+      'Authorization': `Bearer ${token}`
     },
   });
   

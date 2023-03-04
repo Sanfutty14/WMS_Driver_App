@@ -23,13 +23,15 @@ import StringButton from '../assets/svg/stringButton.svg';
 import ExpandButton from '../assets/svg/expandButton.svg';
 
 import arrowRight from '../assets/arrowright.png';
+import { useSelector } from 'react-redux';
 const RideDetails = ({navigation}) => {
-  
+  const dashBoardReducer = useSelector(state => state.DashBoardReducer);
   const [StringValue, setStringValue] = React.useState(true);
+  let forceResetLastButton = null;
   return (
     <View>
       <ScrollView>
-        <View style={{height: wH * 1.2}}>
+        {dashBoardReducer.isLoading === true?<></>:<View style={{height: wH * 1.2}}>
           <View
             style={{
               flexDirection: 'row',
@@ -163,6 +165,7 @@ const RideDetails = ({navigation}) => {
                     paddingHorizontal: wW / 30,
                     marginTop: wW / 30,
                     justifyContent: 'space-between',
+                    
                   }}>
                   <View
                     style={{
@@ -173,7 +176,7 @@ const RideDetails = ({navigation}) => {
                       alignItems: 'center',
                     }}>
                     <Person width={wW / 9} height={wW / 9} />
-                    <View>
+                    <View style={{marginLeft:wW/35,}}>
                       <Text
                         style={{
                           fontSize: normalize(15),
@@ -182,7 +185,8 @@ const RideDetails = ({navigation}) => {
                           color: '#7D47EF',
                           //paddingHorizontal: wW / 30,
                         }}>
-                        Customer 2
+                          
+                        {dashBoardReducer.response.data[0].order_details.length==0? 'Customer': (dashBoardReducer.response.data[0].order_details[0].customer_name)}
                       </Text>
                       <Text
                         style={{
@@ -191,7 +195,7 @@ const RideDetails = ({navigation}) => {
                           color: '#8E8E8E',
                           //paddingHorizontal: wW / 30,
                         }}>
-                        +65 987645312
+                        +65 {dashBoardReducer.response.data[0].order_details.length==0? '8978458975': (dashBoardReducer.response.data[0].order_details[0].customer_contact_number)}
                       </Text>
                     </View>
                   </View>
@@ -218,6 +222,7 @@ const RideDetails = ({navigation}) => {
                       borderRadius: 5,
                       padding: wW / 55,
                       marginTop: wH / 45,
+                      
                     }}>
                     <Text
                       style={{
@@ -227,7 +232,7 @@ const RideDetails = ({navigation}) => {
                       }}>
                       Address:
                     </Text>
-                    <Text
+                    {dashBoardReducer.response.data[0].order_details.length==0?<Text
                       style={{
                         marginTop: 7,
                         fontSize: normalize(14),
@@ -235,8 +240,17 @@ const RideDetails = ({navigation}) => {
                         color: '333333',
                         //paddingLeft: wH / 120,
                       }}>
-                      33rd block, 1st street, unit number 6, Singapore - 123456
-                    </Text>
+                     33rd block, 1st street, unit number 6,Singapore - 123456 
+                    </Text>:<Text
+                      style={{
+                        marginTop: 7,
+                        fontSize: normalize(14),
+                        fontFamily: 'DMSans-Regular', //fontWeight: '600',
+                        color: '333333',
+                        //paddingLeft: wH / 120,
+                      }}>
+                     {dashBoardReducer.response.data[0].order_details[0].shipping_block_number} , {dashBoardReducer.response.data[0].order_details[0].shipping_street_drive_number} {dashBoardReducer.response.data[0].order_details[0].shipping_unit_number} - {dashBoardReducer.response.data[0].order_details[0].shipping_postal_code}
+                    </Text>}
                   </View>
                 </View>
                 <View
@@ -289,6 +303,9 @@ const RideDetails = ({navigation}) => {
                 <SwipeButton
                   containerStyles={{borderRadius: 5}}
                   swipeSuccessThreshold={90}
+                  forceReset={ reset => {
+                    forceResetLastButton = reset
+                  }}
                   height={45}
                   title="Reached location"
                   titleFontSize={normalize(15)}
@@ -296,6 +313,7 @@ const RideDetails = ({navigation}) => {
                   titleStyles={{fontFamily: 'DMSans-Regular'}}
                   onSwipeSuccess={() => {
                     navigation.navigate('Delivered');
+                    forceResetLastButton && forceResetLastButton();
                   }}
                   railFillBackgroundColor="transparent" //(Optional)
                   railStyles={{borderRadius: 5}}
@@ -310,7 +328,7 @@ const RideDetails = ({navigation}) => {
               </View>
             </View>
           </View>
-        </View>
+        </View>}
       </ScrollView>
     </View>
   );

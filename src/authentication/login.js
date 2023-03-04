@@ -39,7 +39,7 @@ const Login = () => {
   const sendMail1 = () => {
     // setloading(true)
     
-    dispatch(postLogin({ "login_email": emailValue, 'password': passwordValue }));
+    dispatch(postLogin({ "email": emailValue, 'password': passwordValue }));
     console.log('login data :::: '+JSON.stringify(LoginData));
   //   apiCallPost({ "email": emailValue, 'password': passwordValue },'/mdriverLogin')
   //   .then(response => {
@@ -200,7 +200,7 @@ const Login = () => {
                 placeholderTextColor={'#9AA6C3'}
                 secureTextEntry={showPassword}
                 onChangeText={value => validatePasssword(value)}
-
+                style={{width:'90%'}}
                 // onFocus={()=>{setKeys(1)}}
               />
               <View style={{marginRight: wW / 50}}>

@@ -1,17 +1,17 @@
 
-import React from "react"
+import React, { useEffect } from "react"
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import dashboard from "../dashboard/dashboard";
 import ResetPassword from "../authentication/resetpassword";
 import Login from "../authentication/login";
 import CreateAccount from "../authentication/createAccount";
-import SuccessPage from "../authentication/successPage";
+
 import orderDetails from "../innerPages/orderDetails";
 import BottomNavBar from "./bottomNav";
 import RideDetails from "../rideStart/rideDetails";
 import Delivered from "../rideStart/delivered";
-import successPage from "../rideStart/successPage";
+import SuccessPage from "../rideStart/successPage";
 import Notification from "../screens/Notification/notification";
 import GetSignature from "../rideStart/getSignature";
 import SignaturePad from "../screens/SignaturePad/signaturePad";
@@ -24,9 +24,34 @@ import AuthStack from "./AuthStack";
 import MapRoute from "../screens/MapRouts/mapRoute";
 import OrderDetails from "../innerPages/orderDetails";
 import ImagePickerPage from "../screens/Expenses/imagePicker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import DriverProfile from "../screens/DriverProfile/driverProfile";
 const Stack = createNativeStackNavigator();
 
-function FlashRouter() {
+function FlashRouter() { 
+const [driverLoginStatus, setDriverLoginStatus] = React.useState(''); 
+useEffect(() => {
+    (async function() {
+        try {
+            const loginStatus = await AsyncStorage.getItem("driverLoginStatus");
+            setDriverLoginStatus(loginStatus);
+        } catch (e) {
+            console.error('ERROR +*+*+*+*+  '+e);
+        }
+    })();
+}, []);   
+
+// useEffect( () => {
+//     async function getLoginStatus() {
+//          const loginStatus = await AsyncStorage.getItem("driverLoginStatus");
+//          setDriverLoginStatus(loginStatus);
+//       }
+  
+      
+//       getLoginStatus();
+        
+      
+//     }, []);
     const userData = useSelector((state)=> state.loginReducer);
     console.log('userData :::::::',userData.response);
    // console.log("=================> Testing For Data", LoginData)
@@ -75,6 +100,7 @@ function FlashRouter() {
             <Stack.Screen name="Expenses" component={Expenses} />
             <Stack.Screen name="AddExpenses" component={AddExpenses} />
             <Stack.Screen name="MapRoute" component={MapRoute} />
+            <Stack.Screen name="DriverProfile" component={DriverProfile} />
             </Stack.Navigator>
         </NavigationContainer>
     );

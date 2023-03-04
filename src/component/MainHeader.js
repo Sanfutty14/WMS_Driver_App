@@ -35,7 +35,7 @@ const MainHeader = ({props, navigation}) => {
       </View>
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate('NotificationScreen');
+          navigation.navigate('Notification');
         }}>
         <NotificationIcon width={24} height={24} />
       </TouchableOpacity>

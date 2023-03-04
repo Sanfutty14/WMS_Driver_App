@@ -1,17 +1,29 @@
 import {StyleSheet, TouchableOpacity, Image, Text, View} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {normalize, wH, wW} from '../styles/globalStyle';
 import Icon from 'react-native-vector-icons/AntDesign';
 import BackArrow from '../assets/svg/backArrow.svg';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Person from '../assets/svg/person.svg';
 import Phone from '../assets/svg/phone.svg';
 import {FONTS} from '../themes/textfonts';
-const OrderDetails = () => {
+import {useDispatch, useSelector} from 'react-redux';
+const OrderDetails = ({route}) => {
+  const dashBoardReducer = useSelector(state => state.DashBoardReducer);
+ 
   const navigation = useNavigation();
+  
+    
+  //const user_name = navigation.getParam('id'); 
+  useState(async () => {
+   
+    console.log('order detailsss ::: '+dashBoardReducer.response===""?'is null':dashBoardReducer.response.data[0].order_details[route.params.id])
+    
+  }, []);
   return (
     <View style={{height: wH}}>
-      <View style={{alignItems: 'center'}}>
+      {dashBoardReducer.isLoading === true?<></>:<View style={{alignItems: 'center'}}>
         <View
           style={{
             flexDirection: 'row',
@@ -133,7 +145,7 @@ const OrderDetails = () => {
                       color: '#7D47EF',
                       //paddingHorizontal: wW / 30,
                     }}>
-                    Customer 2
+                    {dashBoardReducer.response.data[0].order_details[route.params.id].customer_name}
                   </Text>
                   <Text
                     style={{
@@ -143,7 +155,7 @@ const OrderDetails = () => {
                       color: '#8E8E8E',
                       //paddingHorizontal: wW / 30,
                     }}>
-                    +65 987645312
+                    +65 {dashBoardReducer.response.data[0].order_details[route.params.id].customer_contact_number}
                   </Text>
                 </View>
               </View>
@@ -241,7 +253,7 @@ const OrderDetails = () => {
                     /* fontWeight: '600', */
                     color: '#333333',
                   }}>
-                  33rd block, 1st street, unit number 6, Singapore - 123456
+                  {dashBoardReducer.response.data[0].order_details[route.params.id].shipping_block_number} , {dashBoardReducer.response.data[0].order_details[route.params.id].shipping_street_drive_number} {dashBoardReducer.response.data[0].order_details[route.params.id].shipping_unit_number} - {dashBoardReducer.response.data[0].order_details[route.params.id].shipping_postal_code}
                 </Text>
               </View>
             </View>
@@ -372,7 +384,7 @@ const OrderDetails = () => {
             </Text>
           </View>
         </View>
-      </View>
+      </View>}
       <View style={{position: 'absolute', bottom: wH / 20,height:wH/7,}}>
         <View
           style={{

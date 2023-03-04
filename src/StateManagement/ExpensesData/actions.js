@@ -2,7 +2,7 @@
 
 import apiCall, {apiCallGet, apiCallPost} from '../apiCall';
 import {useNavigation} from '@react-navigation/native';
-import {loginActionTypes} from './actionTypes';
+import {expensesActionTypes} from './actionTypes';
 import apiCall2 from '../apiCall2';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // after Relogin set Data to store
@@ -24,44 +24,87 @@ const setReLoginState = (data, data2) => {
 };
 
 export const addExpenses = (data, token) => async dispatch => {
-  console.log('login api calling ::::::::::111'+JSON.stringify(data));
-  // dispatch({type: t.loginActionTypes.LOGIN});
-  
-  const response = await apiCall2(token)
-    .post('/createDriverExpenseDetail', data)
-    
-    try{
-      if (response.status == 200 || response.status == 201) {
-        console.log(response.data)
-        console.log('login api calling ::::::::::222 Success');
-      dispatch({type: loginActionTypes.LOGIN_SUCCESS, payload: response.data});
-      }
+  console.log('addExpenses api calling ::::::::::111' + JSON.stringify(data));
+  // dispatch({type: t.expensesActionTypes.LOGIN});
+
+  const response = await apiCall2(token).post(
+    '/createDriverExpenseDetail',
+    data,
+  );
+
+  try {
+    if (response.status == 200 || response.status == 201) {
+      console.log(response.data);
+      console.log('addExpenses api calling ::::::::::222 Success');
+     return dispatch({
+        type: expensesActionTypes.EXPENSES_RESPONSES_SUCCESS,
+        payload: response.data,
+      });
     }
-    catch{
-           console.log('login api calling ::::::::::111 Error');
+  } catch (err) {
+    console.log('addExpenses api calling ::::::::::111 Error : : : ',err);
+    if (err) {
+      //console.log(err.response.data);
+      return dispatch({
+        type: expensesActionTypes.EXPENSES_RESPONSES_ERROR,
+        payload: err.response.data,
+      });
+    }
+  }
+};
+
+export const getExpenses = (token) => async dispatch => {
+console.log('addExpenses api calling ::::::::::111');
+  // dispatch({type: t.expensesActionTypes.LOGIN});
+
+  const response = await apiCall2(token).get('/getDriverExpenseDetails');
+ // console.log('addExpenses api calling ::::::::::222 response  '+JSON.stringify(response));
+  try {
+    //console.log('addExpenses api calling ::::::::::222 response  '+response);
+    if (response.status == 200 || response.status == 201) {
+      // console.log(response.data)
+      console.log('Get Expenses api calling ::::::::::333 Success');
+      return dispatch({
+        type: expensesActionTypes.EXPENSES_RESPONSES_SUCCESS,
+        payload: response.data,
+      });
+    }
+  } catch (err){
+    console.log('Get Expenses api calling ::::::::::111 Error ',err);
+    if (err) {
+      console.log(err.response.data);
+      return dispatch({
+        type: expensesActionTypes.EXPENSES_RESPONSES_ERROR,
+        payload: err.data,
+      });
+    }
+  }
+};
+
+export const getExpensesType = token => async dispatch => {
+  
+  // dispatch({type: t.expensesActionTypes.LOGIN});
+  
+    const response = await apiCall2(token).get('/getExpenseTypelist');
+   // console.log('addExpenses api calling ::::::::::222 response  '+JSON.stringify(response));
+    try {
+      //console.log('addExpenses api calling ::::::::::222 response  '+response);
+      if (response.status == 200 || response.status == 201) {
+        // console.log(response.data)
+        console.log('addExpenses api calling ::::::::::222 Success');
+        dispatch({
+          type: expensesActionTypes.EXPENSES_TYPE_RESPONSES_SUCCESS,
+          payload: response.data,
+        });
+      }
+    } catch {
+      console.log('addExpenses api calling ::::::::::111 Error');
       if (err) {
         console.log(err.response.data);
         return dispatch({
-          type: loginActionTypes.LOGIN_ERROR,
+          type: expensesActionTypes.EXPENSES_TYPE_RESPONSES_ERROR,
           payload: err.data,
         });
       }
     }
-  //   .catch(err => {
-  //     console.log('login api calling ::::::::::111 Error');
-  //     if (err) {
-  //       console.log(err.response.data);
-  //       return dispatch({
-  //         type: loginActionTypes.LOGIN_ERROR,
-  //         payload: err.data,
-  //       });
-  //     }
-  //   });
-
-  // if (response.status === 200) {
-
-  //   console.log('login api calling ::::::::::222 Success');
-  //   dispatch({type: loginActionTypes.LOGIN_SUCCESS, payload: response.data});
-
-  // }
-};
+  };

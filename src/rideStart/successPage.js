@@ -7,10 +7,10 @@ import Success from '../assets/svg/success.svg';
 import UserProfile from '../assets/svg/userProfile.svg';
 import {FONTS} from '../themes/textfonts';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const successPage = ({navigation}) => {
+const SuccessPage = ({navigation}) => {
   const getTakeBreak = async (value) => {
     await AsyncStorage.setItem("IsBreak", value);
-    
+    await AsyncStorage.setItem("verifySigned", 'false');
     if(value=='false')
     {
       
@@ -135,6 +135,6 @@ const successPage = ({navigation}) => {
   );
 };
 
-export default successPage;
+export default SuccessPage;
 
 const styles = StyleSheet.create({});

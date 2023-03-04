@@ -1,5 +1,6 @@
-import {StyleSheet, TouchableOpacity, Image, Text, View} from 'react-native';
-import React from 'react';
+import {StyleSheet, TouchableOpacity,Modal,ScrollView, Image, Text, View} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {getExpenses} from '../../StateManagement/ExpensesData/actions';
 import {useNavigation} from '@react-navigation/native';
 import {normalize, wH, wW} from '../../styles/globalStyle';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -7,8 +8,39 @@ import BackArrow from '../../assets/svg/backArrow.svg';
 import Person from '../../assets/svg/person.svg';
 import Phone from '../../assets/svg/phone.svg';
 import Document from '../../assets/svg/document.svg';
+import {useDispatch, useSelector} from 'react-redux';
 import {FONTS} from '../../themes/textfonts';
+import Moment from 'moment';
+import { ActivityIndicator, MD2Colors } from 'react-native-paper'
 const Expenses = () => {
+  const dispatch = useDispatch();
+  const loginData = useSelector(state => state.loginReducer);
+  const expensesData = useSelector(state => state.ExpensesReducer);
+  const [isResponse, setIsResponse] = React.useState(false);
+  const [expensesDataResponse, setexpensesDataResponse] = React.useState([]);
+  
+  useEffect(() => {
+    
+    dispatch(
+      getExpenses(
+        loginData.response.data.token,
+      ),
+    );
+    
+   
+    // setexpensesDataResponse(expensesData);
+    
+  }, []);
+  useEffect(() => {
+    
+    expensesData.isLoading ? console.log('Expenses getDetails  1'+JSON.stringify(expensesData)):console.log('Expenses getDetails  2'+JSON.stringify(expensesData));
+    setIsResponse(true);
+    // setexpensesDataResponse(expensesData);
+    
+  }, [expensesData]);
+  
+  console.log('Expenses getDetails :::::::::::::::::::::::  '+JSON.stringify(expensesData));
+  
   const navigation = useNavigation();
   const [maxChip, setMaxChip] = React.useState([
     {
@@ -32,7 +64,13 @@ const Expenses = () => {
   ]);
   return (
     <View style={{height: wH}}>
-      <View style={{alignItems: 'center'}}>
+      
+      <View style={{alignItems: 'center',height: wH}}>
+      
+      <ScrollView>
+        {isResponse ?
+        <View style={{height:wH*3.5}}>
+        
         <View
           style={{
             flexDirection: 'row',
@@ -86,7 +124,7 @@ const Expenses = () => {
               fontWeight: '700',
               color: '#344054',
             }}>
-            $20.95
+            $ {expensesData.response?.data?.total_driver_expense_amount}
           </Text>
           <View
             style={{
@@ -95,7 +133,7 @@ const Expenses = () => {
               width: '100%',
               backgroundColor: '#8E8E8E',
             }}></View>
-          {maxChip.map((item, i) => (
+          {isResponse  ? (<View>{expensesData.response?.data?.driver_expense_details?.map((item, i) => (
             <View
               style={{
                 width: '100%',
@@ -118,7 +156,7 @@ const Expenses = () => {
                   style={{
                     flexDirection: 'row',
                     width: '65%', height: '100%',alignItems:'center',
-                    justifyContent: 'space-evenly',/* backgroundColor:'red' */
+                    justifyContent: 'space-evenly',
                   }}>
                   <View
                     style={{
@@ -136,7 +174,7 @@ const Expenses = () => {
                         fontFamily: 'DMSans-Regular',
                         color: '#344054',
                       }}>
-                      {item.month}
+                      {Moment(item.expense_date).format('MMM')}
                     </Text>
                     <Text
                       style={{
@@ -144,7 +182,7 @@ const Expenses = () => {
                         fontFamily: 'DMSans-Regular',
                         color: '#344054',
                       }}>
-                      {item.date}
+                      {Moment(item.expense_date).format('DD')}
                     </Text>
                   </View>
                   <View
@@ -166,7 +204,7 @@ const Expenses = () => {
                         fontFamily: 'DMSans-Bold',
                         color: '#344054',
                       }}>
-                      {item.name}
+                      {item.expense_type}
                     </Text>
                     <View
                       style={{
@@ -200,12 +238,24 @@ const Expenses = () => {
                     fontFamily: 'DMSans-Bold',
                     color: '#344054',
                   }}>
-                  ${item.expenses}
+                  ${item.expense_amount}
                 </Text>
               </View>
             </View>
-          ))}
+          ))}</View>):(<></>)}
         </View>
+        </View>:
+        <Modal visible={true } animationType="slide" transparent={true}>
+          <View
+            style={{
+              height: wH,
+              width: wW,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(0,0,0,0.5)'
+            }}><ActivityIndicator animating={true} color={'white'} /></View></Modal>
+        }
+        </ScrollView>
       </View>
       <View style={{position: 'absolute', bottom: wH / 30}}>
         <View style={{width: wW, height: wH / 12, alignItems: 'center'}}>
@@ -240,6 +290,7 @@ const Expenses = () => {
           </TouchableOpacity>
         </View>
       </View>
+      
     </View>
   );
 };
